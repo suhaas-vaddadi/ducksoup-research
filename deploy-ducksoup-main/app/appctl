@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [ "$1" = "" ] || [ "$2" = "" ]; then
+    echo "usage for profiles: appctl <up|reload|stop> <ducksoup|monitoring|experiment|nvidia>"
+    echo "usage for services: appctl <pull|sh|reset-config> <service_name>"
+elif [ "$1" = "up" ]; then
+    cmd="docker compose --profile $2 up -d --build --force-recreate"
+elif [ "$1" = "reload" ]; then
+    cmd="docker compose --profile $2 up -d --force-recreate"
+elif [ "$1" = "stop" ]; then
+    cmd="docker compose --profile $2 stop"
+elif [ "$1" = "pull" ] && [ "$2" = "ducksoup" ]; then
+    cmd="docker pull ducksouplab/ducksoup"
+elif [ "$1" = "pull" ]; then
+    cmd="docker compose pull --include-deps $2"
+elif [ "$1" = "sh" ]; then
+    cmd="docker compose exec $2 sh"
+elif [ "$1" = "reset-config" ] && [ "$2" = "ducksoup" ]; then
+    cmd="rm -rf config/ducksoup/*"
+elif [ "$1" = "reup" ] && [ "$2" = "ducksoup" ]; then
+    cmd="rm -rf config/ducksoup/* && docker compose --profile ducksoup up -d --build --force-recreate"
+fi
+
+if [ "$cmd" ]; then
+    echo "$cmd"
+    eval "$cmd"
+fi
+
+# DOCKER_USER=$(id deploy -u) DOCKER_GROUP=$(id deploy -g)
+
+#DOCKER_USER=$(id deploy -u) DOCKER_GROUP=$(id deploy -g) docker compose exec $2 chown -R $(id deploy -u):$(id deploy -g) /app/config

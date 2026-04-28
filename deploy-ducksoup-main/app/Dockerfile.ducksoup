@@ -1,0 +1,38 @@
+#FROM ducksouplab/ducksoup:gst-1.24-plugins-1.0 AS full
+#FROM ducksouplab/ducksoup:latest AS full
+FROM ducksouplab/ducksoup:ducksoup_plugins_gst1.28.0 AS full
+
+# this lightweight image is used to set ownerships on named volume mapped to config
+# using $DOCKER_* variables in .env file as user:group value
+
+FROM ducksouplab/debian-gstreamer:deb12-with-plugins-cuda12.2-gst1.28.0 AS prod
+
+#FROM ducksouplab/debian-gstreamer:deb12-cuda12.2-plugins-gst1.24.10 AS prod
+#FROM ducksouplab/debian-gstreamer:deb11-cuda12.2-gst1.22.7 AS prod
+#FROM ducksouplab/debian-gstreamer:deb11-cuda12.4-gst1.22.10 AS prod
+
+RUN apt-get update && apt-get upgrade -y
+
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/app/plugins"
+ENV GST_PLUGIN_PATH="$GST_PLUGIN_PATH:/app/plugins"
+ENV GST_DEBUG=2
+
+ARG UNAME
+ARG UID
+ARG GID
+RUN groupadd -g ${GID} ${UNAME} && useradd -u ${UID} -g ${GID} -s /bin/sh ${UNAME}
+
+USER ${UID}:${GID}
+WORKDIR /app
+
+COPY --chown=${UID}:${GID} --from=full /app/ducksoup .
+# check .dockerignore to see generated scripts are excluded first...
+COPY --chown=${UID}:${GID} --from=full /app/front/static ./front/static
+
+# add config files last not to refresh too many layers in case only config changes
+COPY --chown=${UID}:${GID} --from=full /app/config ./config
+
+# write date and then append err to file if CONTAINER_STDERR_FILE exists
+SHELL ["/bin/bash", "-c"]
+# CMD if [[ -z "${CONTAINER_STDERR_FILE}" ]]; then ./ducksoup; else (date 1>&2; ./ducksoup) > ${CONTAINER_STDOUT_FILE} 2> ${CONTAINER_STDERR_FILE}; fi
+CMD if [[ -z "${CONTAINER_STDERR_FILE}" ]]; then ./ducksoup; else (date 1>&2; ./ducksoup) 2>>${CONTAINER_STDERR_FILE}; fi

@@ -1,0 +1,12 @@
+/home/deploy/deploy-ducksoup/app/log/ducksoup/*.log {
+  rotate -1
+  daily
+  dateext
+  dateyesterday
+  copytruncate
+  compress
+  missingok
+  notifempty
+  olddir old
+  createolddir 550 deploy deploy
+}

@@ -1,0 +1,9 @@
+services:
+  ducksoup:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              driver: nvidia
+              count: all

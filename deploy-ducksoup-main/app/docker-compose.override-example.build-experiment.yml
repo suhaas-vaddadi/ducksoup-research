@@ -1,0 +1,4 @@
+services:
+  experiment:
+    build:
+      context: ../examples/otree
