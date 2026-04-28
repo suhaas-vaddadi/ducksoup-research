@@ -72,15 +72,6 @@ Use the sidebar sliders to tweak the experiment:
 
 ---
 
-## ⚡ Performance Optimization (ARM Macs)
-
-Running real-time face detection in a Docker VM can be resource-intensive. If you experience lag:
-- **Close Background Apps**: Ensure your CPU is dedicated to the research session.
-- **Lighting**: Ensure the participant's face is well-lit for faster `dlib` detection.
-- **Stream Settings**: The system is currently optimized for `320x240 @ 10fps` to ensure stability. These can be adjusted in `renderer/pages/home.tsx` if more power is available.
-
----
-
 ## Project Structure
 
 ```text
@@ -93,13 +84,4 @@ Running real-time face detection in a Docker VM can be resource-intensive. If yo
 │   └── renderer/         # Next.js UI (Mozza controls and Video logic)
 └── mozza-main/           # Source code for the Mozza plugin (for reference)
 ```
-
-## Maintenance & Plugin Updates
-
-To update the Mozza plugin or change the deformation model:
-1. Replace `libgstmozza.so` or `default.dfm` in `ducksoup-server/plugins/`.
-2. Restart the server: `cd ducksoup-server && docker compose restart ducksoup`.
-3. Re-connect the Electron app.
-
----
-*Developed for Psychology Research Applications.*
+*Developed for Niedenthal Psychology Lab, UW-Madison.*
