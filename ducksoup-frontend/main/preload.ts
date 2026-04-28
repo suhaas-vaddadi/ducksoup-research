@@ -13,6 +13,10 @@ const handler = {
       ipcRenderer.removeListener(channel, subscription)
     }
   },
+  // Invoke handlers (async, returns a promise)
+  invoke<T>(channel: string, ...args: unknown[]): Promise<T> {
+    return ipcRenderer.invoke(channel, ...args)
+  },
 }
 
 contextBridge.exposeInMainWorld('ipc', handler)

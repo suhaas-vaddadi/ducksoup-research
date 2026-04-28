@@ -1,0 +1,26 @@
+# DuckSoup local development setup (ARM Mac / Apple Silicon)
+# Usage: docker compose up -d
+# Test:  open https://localhost:8100/test/mirror/ (or http if no TLS)
+
+services:
+  ducksoup:
+    image: ducksouplab/ducksoup:arm_latest
+    restart: unless-stopped
+    environment:
+      - DUCKSOUP_PORT=8100
+      - DUCKSOUP_ALLOWED_WS_ORIGINS=${DUCKSOUP_ALLOWED_WS_ORIGINS}
+      - DUCKSOUP_STUN_SERVER_URLS=${DUCKSOUP_STUN_SERVER_URLS}
+      - DUCKSOUP_TEST_LOGIN=${DUCKSOUP_TEST_LOGIN}
+      - DUCKSOUP_TEST_PASSWORD=${DUCKSOUP_TEST_PASSWORD}
+      - DUCKSOUP_LOG_STDOUT=${DUCKSOUP_LOG_STDOUT}
+      - DUCKSOUP_LOG_LEVEL=${DUCKSOUP_LOG_LEVEL}
+      - DUCKSOUP_NVCODEC=false
+      - DUCKSOUP_NVCUDA=false
+      - DUCKSOUP_JITTER_BUFFER=${DUCKSOUP_JITTER_BUFFER}
+      - GST_DEBUG=${GST_DEBUG}
+    volumes:
+      - ./data:/app/data
+      - ./log:/app/log
+      - ./plugins:/app/plugins
+    ports:
+      - "8100:8100"
